@@ -1,4 +1,5 @@
 import { SchedulerData } from "@bitnoi.se/react-scheduler";
+//just test checkout 
 export const mockedSchedulerData: SchedulerData = [
     {
       id: "070ac5b5-8369-4cd2-8ba2-0a209130cc60",
