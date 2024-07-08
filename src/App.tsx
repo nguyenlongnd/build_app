@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-
+import { Outlet, Route, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import Loading from './components/Loading'
+import PrivateRoute from './components/Auth/PrivateRoute/PrivateRoute'
+import { Suspense, lazy } from 'react'
+import FallbackLoading from './components/FallbackLoading'
+const Login = lazy(() => import('./components/Login'))
+const Product = lazy(() => import('./components/Product'))
+const Dashboard = lazy(() =>  import('./components/Dashboard'))
+import "@bitnoi.se/react-scheduler/dist/style.css";
+import Schedules from './components/Schedules'
+const SuspenseLayout = () => (
+  <Suspense fallback={<FallbackLoading />}>
+    <Outlet />
+  </Suspense>
+)
+const router = createBrowserRouter([
+  {
+    element: <SuspenseLayout />,
+    children: [
+      {
+        path: '/login',
+        element: <Login />
+      },
+      {
+        path: '/',
+        element: (
+          <PrivateRoute>
+            <Dashboard />,
+          </PrivateRoute>
+        )
+      },
+      {
+        path: '/product',
+        element: (
+          <PrivateRoute>
+            <Product />,
+          </PrivateRoute>
+        )
+      },
+      {
+        path: '/schedules',
+        element: (
+          <PrivateRoute>
+            <Schedules />,
+          </PrivateRoute>
+        )
+      }
+    ]
+  }
+])
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+  return <RouterProvider router={router} fallbackElement={<Loading />} />
 }
 
 export default App
